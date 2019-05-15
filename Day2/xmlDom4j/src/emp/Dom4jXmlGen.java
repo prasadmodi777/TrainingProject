@@ -16,10 +16,10 @@ import org.dom4j.io.XMLWriter;
 public class Dom4jXmlGen {
 	
 	public static void main(String[] args) throws IOException {
-		FileReader fr=new FileReader("cars.properties");
+		FileReader fileReader = new FileReader("cars.properties");
 		
-		Properties p=new Properties();
-		p.load(fr);
+		Properties p = new Properties();
+		p.load(fileReader);
 		
 		
 		
