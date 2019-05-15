@@ -18,22 +18,22 @@ public class Dom4jXmlGen {
 	public static void main(String[] args) throws IOException {
 		FileReader fileReader = new FileReader("cars.properties");
 		
-		Properties p = new Properties();
-		p.load(fileReader);
+		Properties properties = new Properties();
+		properties.load(fileReader);
 		
 		
 		
 		
 		Document doc=DocumentFactory.getInstance().createDocument();
-		Element root=doc.addElement(p.getProperty("root"));
+		Element root=doc.addElement(properties.getProperty("root"));
 		 
-		Element supe=root.addElement(p.getProperty("subroot"));
+		Element supe=root.addElement(properties.getProperty("subroot"));
 
 		Element child1=supe.addElement("carid");
-		child1.addText(p.getProperty("carid"));
+		child1.addText(properties.getProperty("carid"));
 		
 		Element child2=supe.addElement("carname");
-		child2.addText(p.getProperty("carname"));
+		child2.addText(properties.getProperty("carname"));
 		
 		FileOutputStream fos=new FileOutputStream("supercars.xml");
 		
