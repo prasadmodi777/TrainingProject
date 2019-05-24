@@ -1,0 +1,98 @@
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ccxml version="1.0\"> 
+
+ <var name="state0" expr="'init'" />
+<var name="myCallID" expr="''" />
+<var name="myDialog" />
+
+ 
+<eventprocessor statevariable="state0">
+
+<!-- Inbound call is accepted.         -->
+
+  <transition state="init" event="connection.alerting">
+
+   <log expr="'ACCEPTING INBOUND CALL'" />
+
+   <accept/>
+
+  </transition>
+
+
+<!-- *** CCXML front-end loaded / Making outbound call *** -->
+
+  <transition state="init" event="ccxml.loaded">
+
+   <log expr="'-- Application Starting --'" />
+
+   <log expr="'-- Making Outbound Call --'" />
+
+   <assign name="state0" expr="'calling'" />
+
+   <createcall dest="phoneNum" timeout="'10s'" />
+
+  </transition>
+
+ 
+
+<!-- *** If outbound call fails *** -->
+
+  <transition state="calling" event="connection.failed">
+
+   <log expr="'-- Outbound Call Failed / Exiting App --'" />
+
+   <exit/>
+
+  </transition>
+
+ 
+
+<!-- *** If outbound call is successful *** -->
+
+  <transition state="calling" event="connection.connected">
+
+   <log expr="'-- Call Answered --'" />
+
+   <assign name="myCallID" expr="event$.connectionid" />
+
+   <assign name="state0" expr="'call_answered'" />
+
+ 
+
+<!-- *** Creating "timer-like" effect *** -->
+
+<!-- *** For purposes of illustration, we will set this to 30 seconds *** -->
+
+   <send data="'callMaxTimeReached'" target="session.id" delay="'30s'" />
+
+ 
+
+<!-- *** Starting your actual VoiceXML application *** -->
+
+   <dialogstart src="'your_vxml.xml'" dialogid="myDialog" />
+
+  </transition>
+
+  <transition state="call_answered" event="dialog.exit">
+
+   <log expr="'-- VoiceXML App Complete / Exiting App --'" />
+
+   <exit/>
+
+  </transition>
+
+<!-- *** Clean-up when call is disconnected *** -->
+
+  <transition event="connection.disconnected">
+
+   <log expr="'-- Call Leg: ' + event$.connectionid + 'Has Been Disconnected / Exiting App --'" />
+
+   <exit/>
+
+  </transition>
+
+</eventprocessor>
+
+</ccxml>
